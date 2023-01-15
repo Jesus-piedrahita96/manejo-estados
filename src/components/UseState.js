@@ -26,26 +26,42 @@ function UseState(props) {
     if (estado.loading) {
       setTimeout(() => {
         if (estado.valor === SECURITY_CODE) {
-          setEstado({
-            ...estado,
-            loading: false,
-            confirmed: true
-
-          })
+          onConfirm()
 
         } else {
-          setEstado({
-            ...estado,
-            error: true,
-            loading: false
-          })
+         onDiferentConfirm()
         }
       }, 3000);
     }
 
   }, [ estado.loading ])
 
-  //funcion  que se activa con el boton
+  //detector de cambios
+  const onChange = (event) => {
+    setEstado({
+      ...estado,
+      valor: event.target.value
+    })
+  }
+
+  const onConfirm = () => {
+    setEstado({
+      ...estado,
+      loading: false,
+      confirmed: true
+
+    })
+  }
+
+  function onDiferentConfirm() {
+    setEstado({
+      ...estado,
+      error: true,
+      loading: false
+    })
+  }
+
+  //funcionalidades de los button
   const recargar = () => {
     setEstado({
       ...estado,
@@ -54,10 +70,26 @@ function UseState(props) {
     })
   }
 
+  const eliminar = () => {
+    setEstado({
+      ...estado,
+      deleted: true
+    })
+  }
+
   const volver = () => {
     setEstado({
       ...estado,
       confirmed: false,
+      valor: ''
+    })
+  }
+
+  const resetear = () => {
+    setEstado({
+      ...estado,
+      confirmed: false,
+      deleted: false,
       valor: ''
     })
   }
@@ -82,12 +114,7 @@ function UseState(props) {
           placeholder="codigo de seguridad"
           id="buscador"
           value={estado.valor}
-          onChange={(event) => {
-            setEstado({
-              ...estado,
-              valor: event.target.value
-            })
-          }}
+          onChange={onChange}
         />
         <button
           onClick={recargar}
@@ -101,10 +128,7 @@ function UseState(props) {
       <div>
         <h2>Eliminar UseState</h2>
         <p>Seguro que quieres eliminar UseState?</p>
-        <button onClick={() => setEstado({
-          ...estado,
-          deleted: true
-        })}>Si, eliminar</button>
+        <button onClick={eliminar}>Si, eliminar</button>
         <button onClick={volver}>No, volver</button>
       </div>
     )
@@ -112,12 +136,7 @@ function UseState(props) {
     return (
       <div>
         <p>Eliminado con exito</p>
-        <button onClick={() => setEstado({
-          ...estado,
-          confirmed: false,
-          deleted: false,
-          valor: ''
-        })}>Resetear</button>
+        <button onClick={resetear}>Resetear</button>
       </div>
     )
   }
