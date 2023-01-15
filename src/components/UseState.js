@@ -6,11 +6,12 @@ function UseState(props) {
   const SECURITY_CODE = 'paradigma'
 
   //estado compuesto
-  const [estado, setEstado] = React.useState({
-    correcto: false,
+  const [ estado, setEstado ] = React.useState({
     valor: '',
     error: false,
-    loading: false
+    loading: false,
+    deleted: false,
+    confirmed: false
   })
 
   //estados simples (independientes)
@@ -28,7 +29,8 @@ function UseState(props) {
           setEstado({
             ...estado,
             loading: false,
-            correcto: true
+            confirmed: true
+
           })
 
         } else {
@@ -52,42 +54,73 @@ function UseState(props) {
     })
   }
 
-  return (
-    <div>
-      <h2>Eliminar {props.name}</h2>
+  const volver = () => {
+    setEstado({
+      ...estado,
+      confirmed: false,
+      valor: ''
+    })
+  }
 
-      <label htmlFor="buscador">
-        Por favor, escribe el codigo de seguridad
-      </label>
-      <br />
-      {(estado.error) && (
-        <p>Error: el codigo es incorrecto</p>
-      )}
-      {estado.loading && (
-        <span>Cargando: <div className="animation"></div></span>
-      )}
-      {estado.correcto && (
-        <p>Codigo correcto</p>
-      )}
-      <input
-        className="distance"
-        placeholder="codigo de seguridad"
-        id="buscador"
-        value={estado.valor}
-        onChange={(event) => {
-          setEstado({
-            ...estado,
-            valor: event.target.value
-          })
-        }}
-      />
-      <button
-        onClick={recargar}
-      >
-        Comprobar
-      </button>
-    </div>
-  )
+  if (!estado.confirmed && !estado.deleted) {
+    return (
+      <div>
+        <h2>Eliminar {props.name}</h2>
+
+        <label htmlFor="buscador">
+          Por favor, escribe el codigo de seguridad
+        </label>
+        <br />
+        {(estado.error) && (
+          <p>Error: el codigo es incorrecto</p>
+        )}
+        {estado.loading && (
+          <span>Cargando: <div className="animation"></div></span>
+        )}
+        <input
+          className="distance"
+          placeholder="codigo de seguridad"
+          id="buscador"
+          value={estado.valor}
+          onChange={(event) => {
+            setEstado({
+              ...estado,
+              valor: event.target.value
+            })
+          }}
+        />
+        <button
+          onClick={recargar}
+        >
+          Comprobar
+        </button>
+      </div>
+    )
+  } else if (estado.confirmed && !estado.deleted) {
+    return (
+      <div>
+        <h2>Eliminar UseState</h2>
+        <p>Seguro que quieres eliminar UseState?</p>
+        <button onClick={() => setEstado({
+          ...estado,
+          deleted: true
+        })}>Si, eliminar</button>
+        <button onClick={volver}>No, volver</button>
+      </div>
+    )
+  } else {
+    return (
+      <div>
+        <p>Eliminado con exito</p>
+        <button onClick={() => setEstado({
+          ...estado,
+          confirmed: false,
+          deleted: false,
+          valor: ''
+        })}>Resetear</button>
+      </div>
+    )
+  }
 }
 
 export { UseState }
